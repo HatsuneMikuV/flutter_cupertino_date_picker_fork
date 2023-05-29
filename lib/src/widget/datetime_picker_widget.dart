@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../date_picker.dart';
 import '../date_picker_constants.dart';
 import '../date_picker_theme.dart';
@@ -20,13 +19,14 @@ class DateTimePickerWidget extends StatefulWidget {
     this.minDateTime,
     this.maxDateTime,
     this.initDateTime,
-    this.dateFormat: DATETIME_PICKER_TIME_FORMAT,
-    this.locale: DATETIME_PICKER_LOCALE_DEFAULT,
-    this.pickerTheme: DateTimePickerTheme.Default,
+    this.dateFormat = DATETIME_PICKER_TIME_FORMAT,
+    this.locale = DATETIME_PICKER_LOCALE_DEFAULT,
+    this.pickerTheme = DateTimePickerTheme.Default,
     this.minuteDivider = 1,
     this.onCancel,
     this.onChange,
     this.onConfirm,
+    this.hourFormat = 24,
   }) : super(key: key) {
     DateTime minTime = minDateTime ?? DateTime.parse(DATE_PICKER_MIN_DATETIME);
     DateTime maxTime = maxDateTime ?? DateTime.parse(DATE_PICKER_MAX_DATETIME);
@@ -35,6 +35,7 @@ class DateTimePickerWidget extends StatefulWidget {
 
   final DateTime? minDateTime, maxDateTime, initDateTime;
   final String? dateFormat;
+  final int hourFormat;
   final DateTimePickerLocale locale;
   final DateTimePickerTheme pickerTheme;
   final DateVoidCallback? onCancel;
@@ -330,11 +331,22 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
 
   /// render hour、minute、second picker item
   Widget _renderDatePickerItemComponent(int value, String format) {
+    String am = '';
+    if (format == 'HH' && widget.hourFormat == 12) {
+      format = 'hh';
+      if (value > 12) {
+        am = 'PM';
+        value -= 12;
+      } else {
+        am = "AM";
+      }
+    }
+    final date = DateTimeFormatter.formatDateTime(value, format, widget.locale) + am;
     return Container(
       height: widget.pickerTheme.itemHeight,
       alignment: Alignment.center,
       child: Text(
-        DateTimeFormatter.formatDateTime(value, format, widget.locale),
+        date,
         style:
             widget.pickerTheme.itemTextStyle ?? DATETIME_PICKER_ITEM_TEXT_STYLE,
       ),
