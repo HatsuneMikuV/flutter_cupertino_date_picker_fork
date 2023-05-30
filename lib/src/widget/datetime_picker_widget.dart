@@ -335,10 +335,10 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     if (format == 'HH' && widget.hourFormat == 12) {
       format = 'hh';
       if (value > 12) {
-        am = 'PM';
+        am = ' PM';
         value -= 12;
       } else {
-        am = "AM";
+        am = " AM";
       }
     }
     final date = DateTimeFormatter.formatDateTime(value, format, widget.locale) + am;
